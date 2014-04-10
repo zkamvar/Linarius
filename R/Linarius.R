@@ -30,7 +30,7 @@ plolev<-sort(unique(ploidy))
 NULL->alco
 NULL->noms
 NULL->glob
-for(i in plolev) cbind(alco,(1-(apply(as.matrix(xx[ploidy==i,])==0,2,sum)/(apply(as.matrix(xx[ploidy==i,])==0,2,sum)+apply(as.matrix(xx[ploidy==i,])==1,2,sum)))^(1/i))*100)->alco
+for(i in plolev) cbind(alco, colMeans(xx[ploidy == i, ]*100) -> alco
 for(j in plolev) noms<-c(noms,paste(j,"x-frequence(%)", sep="",collapse=""))
 colnames(alco)<-noms
 for(k in plolev) glob<-c(glob,nrow(xx[ploidy==k,]))
