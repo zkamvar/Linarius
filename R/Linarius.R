@@ -12,6 +12,17 @@ for(j in plolev) noms<-c(noms,paste(j,"x-absence", sep='',collapse=''),paste(j,"
 colnames(alco)<-noms
 return(alco)
 }
+
+new.allele.count <- function(xx, ploidy = 2){
+	plolev <- sort(unique(ploidy))
+	print(plolev)
+	alco <- vapply(plolev, count_alleles, matrix(0, nrow = ncol(xx), ncol = 2), xx, ploidy)
+	noms <- as.vector(apply(x, 3, colnames))
+	alco <- as.data.frame(alco)
+	rownames(alco) <- colnames(xx)
+	names(alco) <- noms
+	return(alco)
+}
 #############################################################################################################################################################################
 #sep ploidy al frec
 allele.frec<-function(xx,ploidy=2) {
@@ -30,14 +41,24 @@ return(alco)
 #############################################################################################################################################################################
 #sep ploidy al frec 
 allele.hetero<-function(xx,ploidy=2) {
-plolev<-sort(unique(ploidy))
-NULL->alco
-NULL->noms
-for(i in plolev) cbind(alco,100*(1-((1-(apply(as.matrix(xx[ploidy==i,])==0,2,sum)/(apply(as.matrix(xx[ploidy==i,])==0,2,sum)+apply(as.matrix(xx[ploidy==i,])==1,2,sum)))^(1/i))^i + (apply(as.matrix(xx[ploidy==i,])==0,2,sum)/(apply(as.matrix(xx[ploidy==i,])==0,2,sum)+apply(as.matrix(xx[ploidy==i,])==1,2,sum))))))->alco
-for(j in plolev) noms<-c(noms,paste(j,"x-heterozygocy(%)", sep="",collapse=""))
-colnames(alco)<-noms
-return(alco)
+	plolev <- sort(unique(ploidy))
+  alco <- NULL
+  noms <- NULL
+  for (i in plolev){ 
+  	alco <- cbind(alco, 100 * (1 - ((1 - (apply(as.matrix(xx[ploidy == 
+      i, ]) == 0, 2, sum)/(apply(as.matrix(xx[ploidy == i, 
+      ]) == 0, 2, sum) + apply(as.matrix(xx[ploidy == i, ]) == 
+      1, 2, sum)))^(1/i))^i + (apply(as.matrix(xx[ploidy == 
+      i, ]) == 0, 2, sum)/(apply(as.matrix(xx[ploidy == i, 
+      ]) == 0, 2, sum) + apply(as.matrix(xx[ploidy == i, ]) == 
+      1, 2, sum))))))
+ 	}
+  for (j in plolev) noms <- c(noms, paste(j, "x-heterozygocy(%)", 
+      sep = "", collapse = ""))
+  colnames(alco) <- noms
+  return(alco)
 }
+
 #############################################################################################################################################################################
 #generate Fake Data
 datagen <- function(frec, ploidy){
@@ -62,3 +83,13 @@ datagen <- function(frec, ploidy){
   return(fakedata)
 }
 
+
+count_alleles <- function(ploidy, mat, ploidvec){
+	mat <- mat[ploidvec == ploidy, ]
+	presence <- colSums(mat)
+	absence <- colSums(abs(mat - 1))
+	datalist <- matrix(c(absence, presence), ncol = 2)
+	noms <- paste0(ploidy, c("x-presence", "x-absence"))
+	colnames(datalist) <- noms
+	return(datalist)
+}
