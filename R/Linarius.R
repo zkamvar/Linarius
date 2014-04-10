@@ -40,16 +40,25 @@ return(alco)
 }
 #############################################################################################################################################################################
 #generate Fake Data
-datagen<-function(frec,ploidy) {
-fakedata<-matrix(data = NA, nrow = length(ploidy), ncol = length(frec), byrow = FALSE,  dimnames = NULL)
-plolev<-unique(ploidy)
-lingen<-function(xx){
-	matrix(data = NA, nrow = length(ploidy), ncol = 1, byrow = FALSE,  dimnames = NULL)->allfrec
-	 for(i in plolev)
-	sample(c(0,1),length(ploidy[ploidy==i]),replace=T,prob=c((1-xx)^i,1-((1-xx)^i)))->allfrec[ploidy==i,]
-	return(allfrec)
-	}
-for(j in 1:length(frec)) lingen(frec[j])-> fakedata[,j]
-	return(fakedata)
+datagen <- function(frec, ploidy){
+	fakedata <- matrix(data = NA, nrow = length(ploidy), ncol = length(frec), 
+      							 byrow = FALSE, dimnames = NULL)
+  plolev <- unique(ploidy)
+
+  lingen <- function(xx) {
+  	allfrec <- matrix(data = NA, nrow = length(ploidy), ncol = 1, 
+  					        byrow = FALSE, dimnames = NULL)
+    for (i in plolev){ 
+    	probs <- c((1 - xx)^i, 1 - ((1 - xx)^i))
+    	nsamp <- length(ploidy[ploidy == i])
+    	allfrec[ploidy == i, ] <- sample(0:1, nsamp, replace = TRUE, prob = probs)
+    }
+    return(allfrec)
+  }
+
+  for (j in 1:length(frec)){
+  	fakedata[, j] <- lingen(frec[j])
+  }
+  return(fakedata)
 }
 
