@@ -16,7 +16,8 @@ return(alco)
 new.allele.count <- function(xx, ploidy = 2){
 	plolev <- sort(unique(ploidy))
 	print(plolev)
-	alco <- vapply(plolev, count_alleles, matrix(0, nrow = ncol(xx), ncol = 2), xx, ploidy)
+	VALUE <- matrix(0, nrow = ncol(xx), ncol = 2)
+	alco <- vapply(plolev, count_alleles, VALUE, xx, ploidy)
 	noms <- as.vector(apply(x, 3, colnames))
 	alco <- as.data.frame(alco)
 	rownames(alco) <- colnames(xx)
@@ -30,7 +31,9 @@ plolev<-sort(unique(ploidy))
 NULL->alco
 NULL->noms
 NULL->glob
-for(i in plolev) cbind(alco, colMeans(xx[ploidy == i, ])*100) -> alco
+
+
+for(i in plolev) cbind(alco, (1 - colMeans(ifelse(xx[ploidy == i, ] == 0, 1, 0))^(1/i))*100) -> alco#(1-(apply(as.matrix(xx[ploidy==i,])==0,2,sum)/(apply(as.matrix(xx[ploidy==i,])==0,2,sum)+apply(as.matrix(xx[ploidy==i,])==1,2,sum)))^(1/i))*100)->alco
 for(j in plolev) noms<-c(noms,paste(j,"x-frequence(%)", sep="",collapse=""))
 colnames(alco)<-noms
 for(k in plolev) glob<-c(glob,nrow(xx[ploidy==k,]))
