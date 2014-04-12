@@ -17,9 +17,9 @@ new.allele.count <- function(xx, ploidy = 2){
 	plolev <- sort(unique(ploidy))
 	print(plolev)
 	VALUE <- matrix(0, nrow = ncol(xx), ncol = 2)
-	alco <- vapply(plolev, count_alleles, VALUE, xx, ploidy)
-	noms <- as.vector(apply(x, 3, colnames))
-	alco <- as.data.frame(alco)
+	alco <- vapply(plolev, count_alleles, VALUE, xx, ploidy) # This returns a 3D array
+	noms <- as.vector(apply(x, 3, colnames)) # Get the names of each 2D matrix
+	alco <- as.data.frame(alco) # place all the matrices side by side.
 	rownames(alco) <- colnames(xx)
 	names(alco) <- noms
 	return(alco)
