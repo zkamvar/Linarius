@@ -70,8 +70,9 @@ datagen <- function(frec, ploidy){
   	allfrec <- matrix(data = NA, nrow = length(ploidy), ncol = 1, 
   					        byrow = FALSE, dimnames = NULL)
     for (i in plolev){ 
-    	probs <- c((1 - xx)^i, 1 - ((1 - xx)^i))
-    	nsamp <- length(ploidy[ploidy == i])
+    	abs_freq <- (1 - xx)^i
+    	probs <- c(abs_freq, 1 - abs_freq)
+    	nsamp <- sum(ploidy == i)
     	allfrec[ploidy == i, ] <- sample(0:1, nsamp, replace = TRUE, prob = probs)
     }
     return(allfrec)
